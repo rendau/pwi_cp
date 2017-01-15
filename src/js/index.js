@@ -2,8 +2,11 @@ import '../css/index.sass'
 import PreloaderFile from '../img/loading.gif'
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Polyglot from 'node-polyglot'
+import translations from './i18n'
 
 var API_URL_PREFIX = 'http://192.168.1.33:8888/api/user';
+var pgt = new Polyglot()
 
 class App extends React.Component {
   constructor(props) {
@@ -12,10 +15,12 @@ class App extends React.Component {
       loading: true,
       hasAccess: false,
       formStep: 1,
-      step1PhoneValue: '77776668060',
+      step1PhoneValue: '',
       step2CodeValue: '',
       msg: '',
+      locale: 'ru',
     }
+    pgt.extend(translations[this.state.locale]);
   }
   refreshState() {
     this.setState(this.state);
@@ -37,7 +42,7 @@ class App extends React.Component {
     }
     if(this.state.loading || this.state.hasAccess) return;
     return <div>
-      <div className="header">Для&nbsp;выхода в&nbsp;Интернет необходим <span className="spec">код&nbsp;доступа</span>. <br/>Введите&nbsp;свой&nbsp;номер мобильного&nbsp;телефона, и&nbsp;получите <span className="spec">код</span> через&nbsp;СМС.</div>
+      <div className="header" dangerouslySetInnerHTML={{__html: pgt.t('header_text')}}></div>
       { this.renderForm() }
     </div>;
   }
@@ -102,11 +107,13 @@ class App extends React.Component {
   onSendCodeClick(e) {
     let pn = this.state.step1PhoneValue;
   	if(!(/^[1-9]\d{10,14}$/i).test(pn)) {
-	    this.setStateAttr('msg', 'Неправильный номер');
+	    this.setStateAttr('msg', pgt.t('bad_phone_number_error')+', '+pgt.t('phone_format_hint'));
 	    return;
   	}
+  	this.state.msg = '';
+    this.state.loading = true;
+    this.refreshState();
   	let pnNum = Number(pn);
-  	this.setStateAttr('loading', true);
     fetch(API_URL_PREFIX+'/send_sms_code', {
       mode: 'cors',
       method: 'POST',
@@ -127,8 +134,10 @@ class App extends React.Component {
 	    this.setStateAttr('msg', 'Неправильный код.');
 	    return;
   	}
+    this.state.msg = '';
+    this.state.loading = true;
+    this.refreshState();
   	let codeNum = Number(code);
-  	this.setStateAttr('loading', true);
     fetch(API_URL_PREFIX+'/register', {
       mode: 'cors',
       method: 'POST',
@@ -155,9 +164,11 @@ class App extends React.Component {
     }
   }
   onFetchError(error) {
+    this.setStateAttr('loading', false);
     console.log('fetch error:', error);
   }
   handleAPIError(data) {
+    this.setStateAttr('loading', false);
     console.log('api error:', data);
   }
   redirect(url) {
