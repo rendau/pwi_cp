@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import Polyglot from 'node-polyglot'
 import translations from './i18n'
 
-var API_URL_PREFIX = '/api/user';
+var API_URL_PREFIX = 'http://192.168.1.33:8888/api/user';
 var pgt = new Polyglot()
 
 class App extends React.Component {
