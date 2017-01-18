@@ -11,7 +11,7 @@ var API_URL_PREFIX = '/api/user';
 var pgt = new Polyglot()
 
 if(process.env.NODE_ENV !== 'production') {
-  API_URL_PREFIX = 'http://192.168.1.33:8888' + API_URL_PREFIX;
+  API_URL_PREFIX = 'http://172.16.100.134:8888' + API_URL_PREFIX;
 }
 
 class App extends React.Component {

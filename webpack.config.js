@@ -1,7 +1,5 @@
 var webpack = require('webpack');
 var path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 
 var config = {
   entry: {
@@ -20,7 +18,7 @@ var config = {
       },
       {
         test: /\.s(a|c)ss$/,
-        loader: 'style!css!sass'
+        loader: 'style!css!sass',
       },
       {
         test: /\.(png|gif|jpg)$/i,
@@ -43,19 +41,9 @@ if (process.env.NODE_ENV === 'production') {
         warnings: false
       },
       exclude: [/\.min\.js$/gi],
-    }),
-    new HtmlWebpackPlugin({
-      template: 'src/index.tmpl',
-      inlineSource: '.js$',
-    }),
-    new HtmlWebpackInlineSourcePlugin()
-  )
-} else {
-  config.plugins.push(
-    new HtmlWebpackPlugin({
-      template: 'src/index.tmpl',
     })
   )
+} else {
 }
 
 module.exports = config
