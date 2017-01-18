@@ -1,12 +1,18 @@
-import '../css/index.sass'
-import PreloaderFile from '../img/loading.gif'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Polyglot from 'node-polyglot'
+
+import ajax from './ajax'
 import translations from './i18n'
+import '../css/index.sass'
+import PreloaderFile from '../img/loading.gif'
 
 var API_URL_PREFIX = '/api/user';
 var pgt = new Polyglot()
+
+if(process.env.NODE_ENV !== 'production') {
+  API_URL_PREFIX = 'http://192.168.1.33:8888' + API_URL_PREFIX;
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -60,8 +66,7 @@ class App extends React.Component {
       return <div className="step">
         <div className="form">
           <div className="label">+&nbsp;</div><input type="tel" placeholder="77010000000" maxLength="15"
-            value={this.state.step1PhoneValue} onChange={this.updateStep1PhoneValue.bind(this)}
-            ref={input => input && input.focus()} />
+            value={this.state.step1PhoneValue} onChange={this.updateStep1PhoneValue.bind(this)} />
         </div>
         <div className="action">
           <a className="bt1" onClick={this.onSendCodeClick.bind(this)}>{pgt.t('step1_bt1')}</a>
@@ -72,8 +77,7 @@ class App extends React.Component {
       return <div className="step">
         <div className="form">
           <div className="label">{pgt.t('step2_input_label')}:&nbsp;</div><input type="text" placeholder="6385" maxLength="10"
-            value={this.state.step2CodeValue} onChange={this.updateStep2CodeValue.bind(this)}
-            ref={input => input && input.focus()} />
+            value={this.state.step2CodeValue} onChange={this.updateStep2CodeValue.bind(this)} />
         </div>
         <div className="action">
           <a className="bt1" onClick={this.onRegisterClick.bind(this)}>{pgt.t('step2_bt1')}</a>
@@ -89,11 +93,7 @@ class App extends React.Component {
     return;
   }
   componentDidMount() {
-    fetch(API_URL_PREFIX+'/check', {
-      mode: 'cors',
-      method: 'GET',
-    }).then(this.onFetchResponse.bind(this)).then((data) => {
-      if(data === undefined) return;
+    ajax.sendRequest('GET', API_URL_PREFIX+'/check', null, (st, data) => {
       this.state.loading = false;
       if(data.has_access === true) {
         this.state.hasAccess = true;
@@ -105,7 +105,7 @@ class App extends React.Component {
         this.state.formStep = 1;
         this.refreshState();
       }
-    }).catch(this.onFetchError.bind(this));
+    }, this.onAPIError.bind(this))
   }
   updateStep1PhoneValue(e) {
     this.setStateAttr('step1PhoneValue', e.target.value);
@@ -127,16 +127,11 @@ class App extends React.Component {
     this.state.loading = true;
     this.refreshState();
   	let pnNum = Number(pn);
-    fetch(API_URL_PREFIX+'/send_sms_code', {
-      mode: 'cors',
-      method: 'POST',
-      body: JSON.stringify({phone: pnNum}),
-    }).then(this.onFetchResponse.bind(this)).then((data) => {
-      if(data === undefined) return;
+    ajax.sendRequest('POST', API_URL_PREFIX+'/send_sms_code', {phone: pnNum}, (st, data) => {
       this.state.loading = false;
       this.state.formStep = 2;
       this.refreshState();
-    }).catch(this.onFetchError.bind(this));
+    }, this.onAPIError.bind(this))
   }
   onHasCodeClick(e) {
     this.state.formStep = 2;
@@ -153,40 +148,27 @@ class App extends React.Component {
     this.state.loading = true;
     this.refreshState();
   	let codeNum = Number(code);
-    fetch(API_URL_PREFIX+'/register', {
-      mode: 'cors',
-      method: 'POST',
-      body: JSON.stringify({code: codeNum}),
-    }).then(this.onFetchResponse.bind(this)).then((data) => {
-      if(data === undefined) return;
+    ajax.sendRequest('POST', API_URL_PREFIX+'/register', {code: codeNum}, (st, data) => {
       this.state.loading = false;
       this.state.msg = 'success';
       this.state.hasAccess = true;
       this.refreshState();
       this.redirect(data.redirect_url);
-    }).catch(this.onFetchError.bind(this));
+    }, this.onAPIError.bind(this))
   }
   onHasntCodeClick(e) {
     this.state.formStep = 1;
     this.state.msg = '';
     this.refreshState();
   }
-  onFetchResponse(response) {
-    if(response.ok) {
-      return response.json();
-    } else {
-      response.json().then((data) => {
-        this.handleAPIError(data);
-      }).catch(this.onFetchError.bind(this));
+  onAPIError(st, data, raw_data) {
+    if(data === null) {
+      this.state.loading = false;
+      this.state.hideBody = true;
+      this.state.msg = 'system_error_ocurred';
+      this.refreshState();
+      return;
     }
-  }
-  onFetchError(error) {
-    this.state.loading = false;
-    this.state.hideBody = true;
-    this.state.msg = 'system_error_ocurred';
-    this.refreshState();
-  }
-  handleAPIError(data) {
     this.state.loading = false;
     switch(data.error) { // every case must refresh state
 	  case "already_registered":
