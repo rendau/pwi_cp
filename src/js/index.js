@@ -11,7 +11,7 @@ var API_URL_PREFIX = '/api/user';
 var pgt = new Polyglot()
 
 if(process.env.NODE_ENV !== 'production') {
-  API_URL_PREFIX = 'http://172.16.100.134:8888' + API_URL_PREFIX;
+  API_URL_PREFIX = 'http://192.168.1.36:8888' + API_URL_PREFIX;
 }
 
 class App extends React.Component {
@@ -42,6 +42,7 @@ class App extends React.Component {
       <div id="logo"></div>
       { this.renderBody() }
       { this.renderMsg() }
+      { this.renderAttention() }
     </div>;
   }
   renderLangBar() {
@@ -91,6 +92,9 @@ class App extends React.Component {
       return <div id="msg" dangerouslySetInnerHTML={{__html: pgt.t(this.state.msg)}}></div>;
     }
     return;
+  }
+  renderAttention() {
+    return <div id="attention" dangerouslySetInnerHTML={{__html: pgt.t('attention')}}></div>;
   }
   componentDidMount() {
     ajax.sendRequest('GET', API_URL_PREFIX+'/check', null, (st, data) => {
