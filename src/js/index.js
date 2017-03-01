@@ -4,14 +4,17 @@ import Polyglot from 'node-polyglot'
 
 import ajax from './ajax'
 import translations from './i18n'
+import qpars from './qpars'
 import '../css/index.sass'
 import PreloaderFile from '../img/loading.gif'
 
-var API_URL_PREFIX = '/api/user';
+var API_URL_PREFIX = '/api/v1/ap/user';
 var pgt = new Polyglot()
 
-if(process.env.NODE_ENV !== 'production') {
-  API_URL_PREFIX = 'http://172.16.100.134:8888' + API_URL_PREFIX;
+if(process.env.NODE_ENV === 'production') {
+  API_URL_PREFIX = 'https://pwi.kz:9090' + API_URL_PREFIX;
+} else {
+  API_URL_PREFIX = 'https://pwi.kz:9090' + API_URL_PREFIX;
 }
 
 class App extends React.Component {
@@ -88,12 +91,13 @@ class App extends React.Component {
   }
   renderMsg() {
     if(!this.state.loading && this.state.msg) {
+      // return <div id="msg">{this.state.msg}</div>;
       return <div id="msg" dangerouslySetInnerHTML={{__html: pgt.t(this.state.msg)}}></div>;
     }
     return;
   }
   componentDidMount() {
-    ajax.sendRequest('GET', API_URL_PREFIX+'/check', null, (st, data) => {
+    ajax.sendRequest('POST', API_URL_PREFIX+'/check', null, (st, data) => {
       this.state.loading = false;
       if(data.has_access === true) {
         this.state.hasAccess = true;
@@ -201,10 +205,25 @@ class App extends React.Component {
   	  if(url.indexOf('http://') && url.indexOf('https://')) {
   		  url = 'http://' + url;
       }
-  	  document.location.href = url;
   	} else {
-      document.location.href = 'http://google.com';
+      url = 'http://google.com';
     }
+    let f, i;
+    f = document.createElement("form");
+    f.action = qpars.llink;
+    f.method = "post";
+    i = document.createElement("input");
+    i.name = "dst";
+    i.value = url;
+    i = document.createElement("input");
+    i.name = "username";
+    i.value = "foo";
+    i = document.createElement("input");
+    i.name = "password";
+    i.value = "bar";
+    f.appendChild(i);
+    document.body.appendChild(f);
+    f.submit();
   }
 }
 

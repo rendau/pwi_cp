@@ -1,5 +1,8 @@
+import qpars from './qpars'
+
 class Ajax {
   constructor() {
+    console.log(qpars);
   }
   getXHR() {
     if(typeof XMLHttpRequest != 'undefined') {
@@ -16,12 +19,12 @@ class Ajax {
     return null;
   }
   sendRequest(method, url, data, success_cb, error_cb) {
-    var xhr = this.getXHR();
+    let xhr = this.getXHR();
     xhr.open(method, url, true);
     xhr.onreadystatechange = (() => {
       if(xhr.readyState != 4) return;
       try {
-        var reply_obj = JSON.parse(xhr.responseText);
+        let reply_obj = JSON.parse(xhr.responseText);
         if(199 < xhr.status && xhr.status < 300) { // success
           success_cb(xhr.status, reply_obj);
         } else {
@@ -31,12 +34,13 @@ class Ajax {
         error_cb(xhr.status, null, xhr.responseText);
       }
     });
-    if(data != null) {
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(JSON.stringify(data));
-    } else {
-      xhr.send(null);
+    if(!data) {
+      data = {};
     }
+    data.mac = qpars.mac;
+    xhr.setRequestHeader("Authorization", qpars.token);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(data));
   }
 }
 
