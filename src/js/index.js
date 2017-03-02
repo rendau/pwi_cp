@@ -215,9 +215,11 @@ class App extends React.Component {
     i = document.createElement("input");
     i.name = "dst";
     i.value = url;
+    f.appendChild(i);
     i = document.createElement("input");
     i.name = "username";
     i.value = "foo";
+    f.appendChild(i);
     i = document.createElement("input");
     i.name = "password";
     i.value = "bar";

@@ -5,6 +5,11 @@ function getParams() {
     mac: params.get('mac'),
     llink: params.get('llink'),
   };
+  // return {
+  //   token: 'asdasd',
+  //   mac: 'aaaaa',
+  //   llink: 'aaaaaa',
+  // };
 }
 
 module.exports = getParams();
