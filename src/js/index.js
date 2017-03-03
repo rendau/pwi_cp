@@ -45,6 +45,7 @@ class App extends React.Component {
       <div id="logo"></div>
       { this.renderBody() }
       { this.renderMsg() }
+      { this.renderAttention() }
     </div>;
   }
   renderLangBar() {
@@ -91,10 +92,12 @@ class App extends React.Component {
   }
   renderMsg() {
     if(!this.state.loading && this.state.msg) {
-      // return <div id="msg">{this.state.msg}</div>;
       return <div id="msg" dangerouslySetInnerHTML={{__html: pgt.t(this.state.msg)}}></div>;
     }
     return;
+  }
+  renderAttention() {
+    return <div id="attention" dangerouslySetInnerHTML={{__html: pgt.t('attention')}}></div>;
   }
   componentDidMount() {
     ajax.sendRequest('POST', API_URL_PREFIX+'/check', null, (st, data) => {
