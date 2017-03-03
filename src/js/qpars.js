@@ -1,15 +1,20 @@
 function getParams() {
-  let params = new URLSearchParams(location.search.slice(1));
-  return {
-    token: params.get('token'),
-    mac: params.get('mac'),
-    llink: params.get('llink'),
+  let result = {
+    token: '',
+    mac: '',
+    llink: '',
   };
-  // return {
-  //   token: 'asdasd',
-  //   mac: 'aaaaa',
-  //   llink: 'aaaaaa',
-  // };
+  let pars = window.location.search.substr(1).split('&')
+  if(pars) {
+    for(let i = 0; i < pars.length; i++) {
+      let p = pars[i].split('=', 2);
+      if(p.length == 1)
+        result[p[0]] = "";
+      else
+        result[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+  }
+  return result;
 }
 
 module.exports = getParams();

@@ -1,9 +1,6 @@
 import qpars from './qpars'
 
 class Ajax {
-  constructor() {
-    console.log(qpars);
-  }
   getXHR() {
     if(typeof XMLHttpRequest != 'undefined') {
       return new XMLHttpRequest();

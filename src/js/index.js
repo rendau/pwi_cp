@@ -109,7 +109,7 @@ class App extends React.Component {
         this.state.formStep = 1;
         this.refreshState();
       }
-    }, this.onAPIError.bind(this))
+    }, this.onAPIError.bind(this));
   }
   updateStep1PhoneValue(e) {
     this.setStateAttr('step1PhoneValue', e.target.value);
@@ -224,6 +224,7 @@ class App extends React.Component {
     i.name = "password";
     i.value = "bar";
     f.appendChild(i);
+    f.style.display = 'none';
     document.body.appendChild(f);
     f.submit();
   }
