@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack -p",
-    "server": "webpack-dev-server --content-base ./public",
+    "server": "webpack-dev-server --content-base ./public --host 0.0.0.0",
     "start": "npm run server"
   },
   "author": "NDN",
