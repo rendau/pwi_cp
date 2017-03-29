@@ -103,7 +103,7 @@ class App extends React.Component {
         this.state.hasAccess = true;
         this.state.msg = 'already_have_access';
         this.refreshState();
-        this.redirect(data.redirect_url);
+        this.redirect(data.redirect_url, data.phone);
       } else {
         this.state.hasAccess = false;
         this.state.formStep = 1;
@@ -157,7 +157,7 @@ class App extends React.Component {
       this.state.msg = 'success';
       this.state.hasAccess = true;
       this.refreshState();
-      this.redirect(data.redirect_url);
+      this.redirect(data.redirect_url, data.phone);
     }, this.onAPIError.bind(this))
   }
   onHasntCodeClick(e) {
@@ -179,7 +179,7 @@ class App extends React.Component {
       this.state.hasAccess = true;
       this.state.msg = 'already_have_access';
       this.refreshState();
-      this.redirect(data.redirect_url);
+      this.redirect(data.redirect_url, data.phone);
   		break;
 	  case "too_frequent":
       this.setStateAttr('msg', 'api_error_too_frequent');
@@ -200,7 +200,7 @@ class App extends React.Component {
       break;
 	  }
   }
-  redirect(url) {
+  redirect(url, phone) {
   	if(url) {
   	  if(url.indexOf('http://') && url.indexOf('https://')) {
   		  url = 'http://' + url;
@@ -218,11 +218,11 @@ class App extends React.Component {
     f.appendChild(i);
     i = document.createElement("input");
     i.name = "username";
-    i.value = "foo";
+    i.value = phone + "_" + Math.floor(Math.random() * 99999);
     f.appendChild(i);
     i = document.createElement("input");
     i.name = "password";
-    i.value = "bar";
+    i.value = "password";
     f.appendChild(i);
     f.style.display = 'none';
     document.body.appendChild(f);

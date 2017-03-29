@@ -15,7 +15,6 @@ function getParams() {
         result[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
     }
   }
-  console.log(result);
   return result;
 }
 
