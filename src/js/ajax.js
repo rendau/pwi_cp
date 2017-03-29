@@ -35,6 +35,7 @@ class Ajax {
       data = {};
     }
     data.mac = qpars.mac;
+    data.ip = qpars.ip;
     xhr.setRequestHeader("Authorization", qpars.token);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(data));
