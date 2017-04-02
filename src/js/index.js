@@ -8,14 +8,11 @@ import qpars from './qpars'
 import '../css/index.sass'
 import PreloaderFile from '../img/loading.gif'
 
-var API_URL_PREFIX = '/api/v1/ap/user';
+var API_URL_PREFIX = window.location.origin + '/api/v1/ap/user';
 var pgt = new Polyglot()
 
-if(process.env.NODE_ENV === 'production') {
-  API_URL_PREFIX = 'https://pwi.kz:9090' + API_URL_PREFIX;
-} else {
-  API_URL_PREFIX = 'http://192.168.88.254:9090' + API_URL_PREFIX;
-}
+// if(process.env.NODE_ENV === 'production') {
+// }
 
 class App extends React.Component {
   constructor(props) {
