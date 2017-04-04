@@ -8,11 +8,14 @@ import qpars from './qpars'
 import '../css/index.sass'
 import PreloaderFile from '../img/loading.gif'
 
-var API_URL_PREFIX = window.location.origin + '/api/v1/ap/user';
+var API_URL_PREFIX = '/api/v1/ap/user';
 var pgt = new Polyglot()
 
-// if(process.env.NODE_ENV === 'production') {
-// }
+if(process.env.NODE_ENV === 'production') {
+  API_URL_PREFIX = window.location.origin + API_URL_PREFIX;
+} else {
+  API_URL_PREFIX = 'http://localhost:9090' + API_URL_PREFIX;
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -21,6 +24,7 @@ class App extends React.Component {
       loading: true,
       hasAccess: false,
       hideBody: false,
+      showAgreement: false,
       formStep: 1,
       step1PhoneValue: '',
       step2CodeValue: '',
@@ -37,11 +41,23 @@ class App extends React.Component {
     this.refreshState()
   }
   render() {
+    if(this.state.showAgreement) {
+      return this.renderAgreement();
+    }
     return <div id="container">
       { this.renderLangBar() }
       <div id="logo"></div>
       { this.renderBody() }
       { this.renderMsg() }
+    </div>;
+  }
+  renderAgreement() {
+    return <div id="agreement">
+      <div className="header">Соглашение</div>
+      <div className="text">
+        Настоящим даю ТОО «GRAND PARK LTD» согласие на сбор, обработку и хранение персональных данных обо мне (включая биометрические) и на SMS-рассылку рекламного характера на мой мобильный телефон.<br/><br/>Настоящим подтверждаю, что не требуется какого-либо дополнительного моего согласия на сбор, обработку, хранение персональных данных обо мне и на SMS-рассылку, и в дальнейшем каких-либо претензий касательно сбора, обработки, хранения моих персональных данных и SMS-рассылки в мой адрес, иметь не буду.<br/><br/>Подтверждаю, что настоящее согласие действует в течение неопределенного срока (бессрочно).<br/><br/>Текст настоящего согласия мной прочитан, дополнений и возражений не имею.
+      </div>
+      <div className="action" onClick={this.onCloseAgreementClick.bind(this)}><a className="bt1">Закрыть</a></div>
     </div>;
   }
   renderLangBar() {
@@ -57,7 +73,13 @@ class App extends React.Component {
     }
     if(this.state.hideBody || this.state.loading || this.state.hasAccess) return;
     return <div>
-      <div className="header" dangerouslySetInnerHTML={{__html: pgt.t('header_text')}}></div>
+      <div id="header" dangerouslySetInnerHTML={{__html: pgt.t('header_text')}}></div>
+      <div className="agreement_note">
+        {pgt.t('agreement_note')}&nbsp;
+        <span className="agreement_note_button" onClick={this.onShowAgreementClick.bind(this)}>
+          {pgt.t('agreement_note_button')}
+        </span>
+      </div>
       { this.renderForm() }
     </div>;
   }
@@ -68,7 +90,7 @@ class App extends React.Component {
           <div className="label">+&nbsp;</div><input type="tel" placeholder="77010000000" maxLength="15"
             value={this.state.step1PhoneValue} onChange={this.updateStep1PhoneValue.bind(this)} />
         </div>
-        <div className="action">
+        <div id="action">
           <a className="bt1" onClick={this.onSendCodeClick.bind(this)}>{pgt.t('step1_bt1')}</a>
           <a className="bt2" onClick={this.onHasCodeClick.bind(this)}>{pgt.t('step1_bt2')}</a>
         </div>
@@ -79,7 +101,7 @@ class App extends React.Component {
           <div className="label">{pgt.t('step2_input_label')}:&nbsp;</div><input type="text" placeholder="6385" maxLength="10"
             value={this.state.step2CodeValue} onChange={this.updateStep2CodeValue.bind(this)} />
         </div>
-        <div className="action">
+        <div id="action">
           <a className="bt1" onClick={this.onRegisterClick.bind(this)}>{pgt.t('step2_bt1')}</a>
           <a className="bt2" onClick={this.onHasntCodeClick.bind(this)}>{pgt.t('step2_bt2')}</a>
         </div>
@@ -113,6 +135,12 @@ class App extends React.Component {
   }
   updateStep2CodeValue(e) {
     this.setStateAttr('step2CodeValue', e.target.value);
+  }
+  onShowAgreementClick() {
+    this.setStateAttr('showAgreement', true);
+  }
+  onCloseAgreementClick() {
+    this.setStateAttr('showAgreement', false);
   }
   onLangClick(code, e) {
     pgt.replace(translations[code]);

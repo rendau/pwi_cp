@@ -15,6 +15,8 @@ module.exports = {
     'api_error_sms_send_fail': 'Fail to send SMS to this number. <br/>The phone-number must contain only digits, without "+" and must contain the country code',
     'api_error_bad_sms_code': 'Wrong SMS code',
     'system_error_ocurred': 'System error ocurred, service is temporarily unavailable',
+    'agreement_note': 'By registering I accept next',
+    'agreement_note_button': 'agreement',
   },
   ru: {
     'header_text': 'Для входа в Интернет необходим <span class="spec">код&nbsp;доступа</span>. <br/>Введите свой номер мобильного&nbsp;телефона, и получите <span class="spec">код</span> через СМС',
@@ -32,6 +34,8 @@ module.exports = {
     'api_error_sms_send_fail': 'Не удалось отправить СМС на указанный номер. <br/>Номер должен содержать только цифры, без&nbsp;знака&nbsp;"+", и должен содержать код&nbsp;страны',
     'api_error_bad_sms_code': 'Вы ввели неверный СМС код',
     'system_error_ocurred': 'Извините произошла системная ошибка, сервис временно не доступен',
+    'agreement_note': 'Регистрируясь вы соглашаетесь со следующими',
+    'agreement_note_button': 'условиями',
   },
   kz: {
     'header_text': 'Интернетке кіру үшін <span class="spec">кіру&nbsp;коды</span> керек. <br/>Ұялы телефоныңыздың номерін енгізіп, СМС арқылы код алыңыз',
@@ -49,5 +53,7 @@ module.exports = {
     'api_error_sms_send_fail': 'Сіз терген номерге СМС жіберіле алмады. <br/>Номер "+" белгісіз, тек цифрлардан тұру керек, жәнеде ел кодынан басталу керек',
     'api_error_bad_sms_code': 'терілген СМС код дұрыс емес',
     'system_error_ocurred': 'Кешіріңіз системада қате кетті, қызмет көрсету әзірше қолжетімсіз',
+    'agreement_note': 'Тіркелу арқылы сіз келесі шартпен келісесіз -',
+    'agreement_note_button': 'шарт',
   },
 }

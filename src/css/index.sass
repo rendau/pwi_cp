@@ -56,9 +56,39 @@ input
   background-size: contain
   transition: width .3s, height .3s
 
-.header
+#header
   text-align: center
   line-height: 24px
+
+.agreement_note
+  margin-top: 10px
+  font-size: .9rem
+  line-height: 20px
+
+.agreement_note_button
+  display: inline-block
+  color: green
+  font-weight: bold
+  -moz-user-select: none
+  -webkit-user-select: none
+  -ms-user-select: none
+  cursor: pointer
+
+#agreement
+  display: inline-block
+  max-width: 450px
+  margin: 15px
+  font-size: .9rem
+
+  >.header
+    font-weight: bold
+    margin: 15px 0
+
+  >.text
+    text-align: left
+
+  >.action
+    margin-top: 15px
 
 .spec
   color: blue
@@ -72,7 +102,7 @@ input
     display: inline-block
     vertical-align: middle
 
-.action
+#action
   margin-top: 20px
   text-align: center
   white-space: nowrap
@@ -109,7 +139,7 @@ input
   cursor: pointer
 
 #msg
-  margin-top: 40px
+  margin-top: 30px
   text-align: center
   font-size: 16px
   color: red
@@ -119,15 +149,32 @@ input
   #logo
     height: 160px
 
-  .header
+  #header
     font-size: .8rem
     line-height: 20px
+
+  .agreement_note
+    margin-top: 5px
+    font-size: .8rem
 
   .form
     margin-top: 15px
 
-  .action
+  #action
     margin-top: 15px
 
     >br
       display: none
+
+  #msg
+    margin-top: 15px
+    font-size: .8rem
+
+  #agreement
+    font-size: .8rem
+
+    >.header
+      margin: 10px 0
+
+    >.action
+      margin-top: 10px
