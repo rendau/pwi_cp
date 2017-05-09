@@ -12,9 +12,9 @@ var API_URL_PREFIX = '/api/v1/ap/user';
 var pgt = new Polyglot()
 
 if(process.env.NODE_ENV === 'production') {
-  API_URL_PREFIX = 'https://pwi.kz:9090' + API_URL_PREFIX;
+  API_URL_PREFIX = window.location.origin + API_URL_PREFIX;
 } else {
-  API_URL_PREFIX = 'https://pwi.kz:9090' + API_URL_PREFIX;
+  API_URL_PREFIX = 'http://localhost:9090' + API_URL_PREFIX;
 }
 
 class App extends React.Component {
