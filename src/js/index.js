@@ -184,6 +184,11 @@ class App extends React.Component {
       this.refreshState();
       this.redirect(data.redirect_url);
   		break;
+	  case "in_black_list":
+      this.state.hideBody = true;
+      this.state.msg = 'api_error_in_black_list';
+      this.refreshState();
+  		break;
 	  case "too_frequent":
       this.setStateAttr('msg', 'api_error_too_frequent');
   		break;
