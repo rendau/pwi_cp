@@ -8,11 +8,14 @@ import qpars from './qpars'
 import '../css/index.sass'
 import PreloaderFile from '../img/loading.gif'
 
-var API_URL_PREFIX = window.location.origin + '/api/v1/ap/user';
+var API_URL_PREFIX = '/api/v1/ap/user';
 var pgt = new Polyglot()
 
-// if(process.env.NODE_ENV === 'production') {
-// }
+if(process.env.NODE_ENV === 'production') {
+  API_URL_PREFIX = window.location.origin + API_URL_PREFIX;
+} else {
+  API_URL_PREFIX = 'http://localhost:9090' + API_URL_PREFIX;
+}
 
 class App extends React.Component {
   constructor(props) {
