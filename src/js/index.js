@@ -18,7 +18,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
+      loading: false,
       hasAccess: false,
       hideBody: false,
       formStep: 1,
@@ -43,6 +43,7 @@ class App extends React.Component {
       { this.renderBody() }
       { this.renderMsg() }
       { this.renderAttention() }
+      { this.renderAboutAD() }
     </div>;
   }
   renderLangBar() {
@@ -96,7 +97,11 @@ class App extends React.Component {
   renderAttention() {
     return <div id="attention" dangerouslySetInnerHTML={{__html: pgt.t('attention')}}></div>;
   }
+  renderAboutAD() {
+    return <div id="about_ad" dangerouslySetInnerHTML={{__html: pgt.t('about_ad')}}></div>;
+  }
   componentDidMount() {
+    return;
     ajax.sendRequest('GET', API_URL_PREFIX+'/check', null, (st, data) => {
       this.state.loading = false;
       if(data.has_access === true) {

@@ -16,6 +16,7 @@ module.exports = {
     'api_error_bad_sms_code': 'Wrong SMS code',
     'system_error_ocurred': 'System error ocurred, service is temporarily unavailable',
     'attention': '<span style="color:red;">Attention!</span> <br/>Video resources, online games, file hosting services and etc. can work with download speed restrictions.',
+    'about_ad': 'On advertising issues, call to: <br/>+7 (727) 220-80-86, +7 (777) 399 399 7',
   },
   ru: {
     'header_text': 'Для входа в Интернет необходим <span class="spec">код&nbsp;доступа</span>. <br/>Введите свой номер мобильного&nbsp;телефона, и получите <span class="spec">код</span> через СМС',
@@ -34,6 +35,7 @@ module.exports = {
     'api_error_bad_sms_code': 'Вы ввели неверный СМС код',
     'system_error_ocurred': 'Извините произошла системная ошибка, сервис временно не доступен',
     'attention': '<span style="color:red;">Внимание!</span> <br/>Видеоресурсы, онлайн игры, файлообменники и пр., могут работать с ограничением по скорости загрузки.',
+    'about_ad': 'По вопросам размещения рекламы и за дополнительной информацией обращайтесь по телефонам <br/>+7 (727) 220-80-86, +7 (777) 399 399 7',
   },
   kz: {
     'header_text': 'Интернетке кіру үшін <span class="spec">кіру&nbsp;коды</span> керек. <br/>Ұялы телефоныңыздың номерін енгізіп, СМС арқылы код алыңыз',
@@ -52,5 +54,6 @@ module.exports = {
     'api_error_bad_sms_code': 'терілген СМС код дұрыс емес',
     'system_error_ocurred': 'Кешіріңіз системада кате кетті, қызмет көрсету әзірше қолжетімсіз',
     'attention': '<span style="color:red;">Назар аударыңыз!</span> <br/>видеоресурстар, онлайн ойындар, файл алмасулар және т.с. жүктеу жылдамдығы бойынша шектеумен жұмыс істей алады.',
+    'about_ad': 'Жарнама жайлы мына номерлер арқылы біле аласыз <br/>+7 (727) 220-80-86, +7 (777) 399 399 7',
   },
 }
