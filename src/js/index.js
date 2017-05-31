@@ -8,7 +8,7 @@ import qpars from './qpars'
 import '../css/index.sass'
 import PreloaderFile from '../img/loading.gif'
 
-var API_URL_PREFIX = '/api/v1/ap/user';
+var API_URL_PREFIX = '/api/v1/hotspot/client';
 var pgt = new Polyglot()
 
 if(process.env.NODE_ENV === 'production') {
