@@ -8,7 +8,7 @@ import qpars from "./qpars";
 import "../css/index.sass";
 import PreloaderFile from "../img/loading.gif";
 
-let API_URL_PREFIX = '/api/v1/hotspot/client';
+let API_URL_PREFIX = '/api/v1/hotspot';
 let pgt = new Polyglot()
 
 if (process.env.NODE_ENV === 'production') {
@@ -22,6 +22,8 @@ class App extends React.Component {
     super(props);
     this.state = {
       loading: true,
+      pending_logo_url: true,
+      logo_url: '',
       hasAccess: false,
       hideBody: false,
       formStep: 1,
@@ -31,6 +33,15 @@ class App extends React.Component {
       locale: 'ru',
     };
     pgt.extend(translations[this.state.locale]);
+    ajax.sendRequest('GET', API_URL_PREFIX + '/branding', null, (st, data) => {
+      this.state.pending_logo_url = false;
+      this.state.logo_url = data.logo;
+      this.refreshState();
+    }, () => {
+      this.state.pending_logo_url = false;
+      this.state.logo_url = "";
+      this.refreshState();
+    });
   }
 
   refreshState() {
@@ -45,7 +56,7 @@ class App extends React.Component {
   render() {
     return <div id="container">
       { this.renderLangBar() }
-      <div id="logo"/>
+      { this.state.pending_logo_url || <img id="logo" src={this.state.logo_url}/> }
       { this.renderBody() }
       { this.renderMsg() }
     </div>;
@@ -112,7 +123,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    ajax.sendRequest('POST', API_URL_PREFIX + '/check', null, (st, data) => {
+    ajax.sendRequest('POST', API_URL_PREFIX + '/client/check', null, (st, data) => {
       this.state.loading = false;
       if (data.has_access === true) {
         this.state.hasAccess = true;
@@ -150,7 +161,7 @@ class App extends React.Component {
     this.state.loading = true;
     this.refreshState();
     let pnNum = Number(pn);
-    ajax.sendRequest('POST', API_URL_PREFIX + '/send_sms_code', {phone: pnNum}, (st, data) => {
+    ajax.sendRequest('POST', API_URL_PREFIX + '/client/send_sms_code', {phone: pnNum}, (st, data) => {
       this.state.loading = false;
       this.state.formStep = 2;
       this.refreshState();
@@ -173,7 +184,7 @@ class App extends React.Component {
     this.state.loading = true;
     this.refreshState();
     let codeNum = Number(code);
-    ajax.sendRequest('POST', API_URL_PREFIX + '/register', {code: codeNum}, (st, data) => {
+    ajax.sendRequest('POST', API_URL_PREFIX + '/client/register', {code: codeNum}, (st, data) => {
       this.state.loading = false;
       this.state.msg = 'success';
       this.state.hasAccess = true;
