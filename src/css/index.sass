@@ -9,8 +9,8 @@ html, body
 
 html
   height: 100%
-  font: 18px Arial, sans-serif
-  background-color: #fbfcfd
+  font: 16px Arial, sans-serif
+  background-color: #fff
 
 body
   min-height: 100%
@@ -48,28 +48,32 @@ input
 
 #logo
   display: inline-block
-  width: auto
+  vertical-align: middle
   max-width: 100%
-  height: 256px
+  max-height: 256px
+  margin-top: 15px
+
+#body
+  margin-top: 15px
 
 .header
   text-align: center
-  line-height: 24px
+  line-height: 22px
 
 .spec
   color: blue
 
 .form
+  margin-top: 15px
   text-align: center
   white-space: nowrap
-  margin-top: 20px
 
   >*
     display: inline-block
     vertical-align: middle
 
 .action
-  margin-top: 20px
+  margin-top: 15px
   text-align: center
   white-space: nowrap
 
@@ -105,15 +109,15 @@ input
   cursor: pointer
 
 #msg
-  margin-top: 40px
+  margin-top: 15px
   text-align: center
-  font-size: 16px
+  font-size: 14px
   color: red
 
 @media screen and (max-device-width: 480px)
 
-  #logo_container
-    height: 180px
+  #logo
+    max-height: 140px
 
   .header
     >br

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Polyglot from "node-polyglot";
+import Polyglot from "node-polyglot/build/polyglot.min";
 
 import ajax from "./ajax";
 import translations from "./i18n";
@@ -22,7 +22,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      pending_logo_url: true,
       logo_url: '',
       hasAccess: false,
       hideBody: false,
@@ -34,12 +33,7 @@ class App extends React.Component {
     };
     pgt.extend(translations[this.state.locale]);
     ajax.sendRequest('GET', API_URL_PREFIX + '/branding', null, (st, data) => {
-      this.state.pending_logo_url = false;
       this.state.logo_url = data.logo;
-      this.refreshState();
-    }, () => {
-      this.state.pending_logo_url = false;
-      this.state.logo_url = "";
       this.refreshState();
     });
   }
@@ -56,7 +50,7 @@ class App extends React.Component {
   render() {
     return <div id="container">
       { this.renderLangBar() }
-      { this.state.pending_logo_url || <img id="logo" src={this.state.logo_url}/> }
+      { this.renderLogo() }
       { this.renderBody() }
       { this.renderMsg() }
     </div>;
@@ -76,12 +70,17 @@ class App extends React.Component {
     </ul>
   }
 
+  renderLogo() {
+    if (!this.state.logo_url) return;
+    return <div><img id="logo" src={this.state.logo_url}/></div>;
+  }
+
   renderBody() {
     if (this.state.loading) {
-      return <img src={PreloaderFile}/>
+      return <img src={PreloaderFile}/>;
     }
     if (this.state.hideBody || this.state.loading || this.state.hasAccess) return;
-    return <div>
+    return <div id="body">
       <div className="header" dangerouslySetInnerHTML={{__html: pgt.t('header_text')}}/>
       { this.renderForm() }
     </div>;
