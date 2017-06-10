@@ -1,8 +1,8 @@
-import qpars from './qpars'
+import qpars from "./qpars";
 
 class Ajax {
   getXHR() {
-    if(typeof XMLHttpRequest != 'undefined') {
+    if (typeof XMLHttpRequest !== 'undefined') {
       return new XMLHttpRequest();
     }
     try {
@@ -15,23 +15,24 @@ class Ajax {
     }
     return null;
   }
+
   sendRequest(method, url, data, success_cb, error_cb) {
     let xhr = this.getXHR();
     xhr.open(method, url, true);
     xhr.onreadystatechange = (() => {
-      if(xhr.readyState != 4) return;
+      if (xhr.readyState !== 4) return;
       try {
         let reply_obj = JSON.parse(xhr.responseText);
-        if(199 < xhr.status && xhr.status < 300) { // success
+        if (199 < xhr.status && xhr.status < 300) { // success
           success_cb(xhr.status, reply_obj);
         } else {
           error_cb(xhr.status, reply_obj, xhr.responseText);
         }
-      } catch(e) {
+      } catch (e) {
         error_cb(xhr.status, null, xhr.responseText);
       }
     });
-    if(!data) {
+    if (!data) {
       data = {};
     }
     data.mac = qpars.mac;
