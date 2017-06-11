@@ -1,49 +1,67 @@
-var webpack = require('webpack');
-var path = require('path');
+var path = require('path')
+var webpack = require('webpack')
 
-var config = {
-  entry: {
-    app: './src/js/index.js',
-  },
+module.exports = {
+  entry: './src/main.js',
   output: {
-    path: path.join(__dirname, 'public'),
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, './dist'),
+    publicPath: '/dist/',
+    filename: 'bundle.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+          }
+          // other vue-loader options go here
+        }
+      },
+      {
+        test: /\.js$/,
         exclude: /node_modules/,
-        loaders: ['babel?presets[]=react,presets[]=es2015'],
+        loader: 'babel-loader',
       },
       {
-        test: /\.s(a|c)ss$/,
-        loader: 'style!css!sass',
-      },
-      {
-        test: /\.(png|gif|jpg)$/i,
+        test: /\.(png|jpg|gif|svg)$/,
         loader: 'url-loader',
       }
     ]
   },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-    }),
-  ]
+  resolve: {
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js'
+    }
+  },
+  devServer: {
+    historyApiFallback: true,
+    noInfo: true
+  },
+  performance: {
+    hints: false
+  },
+  devtool: '#eval-source-map'
 }
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(
+  module.exports.devtool = '#source-map'
+  // http://vue-loader.vuejs.org/en/workflow/production.html
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
+    }),
     new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
+      sourceMap: true,
       compress: {
         warnings: false
-      },
-      exclude: [/\.min\.js$/gi],
+      }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true
     })
-  )
-} else {
+  ])
 }
-
-module.exports = config
