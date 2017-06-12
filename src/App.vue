@@ -1,36 +1,71 @@
 <template>
   <div id="app">
-    <ul id="langbar">
-      <li v-on:click="langClicked('en')" v-bind:class="{selected: locale=='en'}">English</li>
-      <li v-on:click="langClicked('ru')" v-bind:class="{selected: locale=='ru'}">Русский</li>
-      <li v-on:click="langClicked('kz')" v-bind:class="{selected: locale=='kz'}">Қазақша</li>
-    </ul>
-    <div v-if="logo_url !== ''" class="block"><img id="logo" v-bind:src="logo_url"/></div>
-    <div v-if="loading" class="block"><img src="./assets/loading.gif"/></div>
-    <template v-else-if="!hasAccess && !hideBody">
-      <div class="block" id="header" v-html="i18n[locale]['header_text']"></div>
-      <template v-if="formStep === 1">
-        <div class="block form">
-          <span>+&nbsp;</span>
-          <input type="tel" placeholder="77010000000" maxLength="15" v-model="phone"/>
+    <div v-if="showAgreement" id="agreement">
+      <h1>{{ i18n[locale]['Agreement'] }}</h1>
+      <article>
+        <p>
+          Настоящим даю согласие на сбор,
+          обработку и хранение персональных данных обо мне
+          (включая биометрические) и на SMS-рассылку рекламного
+          характера на мой мобильный телефон.
+        </p>
+        <p>
+          Настоящим подтверждаю, что не требуется какого-либо
+          дополнительного моего согласия на сбор, обработку,
+          хранение персональных данных обо мне и на SMS-рассылку,
+          и в дальнейшем каких-либо претензий касательно сбора,
+          обработки, хранения моих персональных данных и
+          SMS-рассылки в мой адрес, иметь не буду.
+        </p>
+        <p>
+          Подтверждаю, что настоящее согласие действует в течение
+          неопределенного срока (бессрочно).
+        </p>
+        <p>
+          Текст настоящего согласия мной прочитан, дополнений и возражений не имею.
+        </p>
+      </article>
+      <footer><a class="bt1" v-on:click="closeAgreementClicked">{{ i18n[locale]['Close'] }}</a></footer>
+    </div>
+    <template v-else>
+      <ul id="langbar">
+        <li v-on:click="langClicked('en')" v-bind:class="{selected: locale=='en'}">English</li>
+        <li v-on:click="langClicked('ru')" v-bind:class="{selected: locale=='ru'}">Русский</li>
+        <li v-on:click="langClicked('kz')" v-bind:class="{selected: locale=='kz'}">Қазақша</li>
+      </ul>
+      <div v-if="logo_url !== ''" class="block"><img id="logo" v-bind:src="logo_url"/></div>
+      <div v-if="loading" class="block"><img src="./assets/loading.gif"/></div>
+      <template v-else-if="!hasAccess && !hideBody">
+        <div class="block" id="header" v-html="i18n[locale]['header_text']"></div>
+        <div class="agreement_note">
+          {{ i18n[locale]['agreement_note'] }}
+          <span class="agreement_note_button" v-on:click="openAgreementClicked">
+            {{ i18n[locale]['agreement_note_button'] }}
+          </span>
         </div>
-        <div class="block action">
-          <a class="bt1" v-on:click="step1OKClicked">{{ i18n[locale]['step1_bt1'] }}</a>
-          <a class="bt2" v-on:click="step1HasCodeClicked">{{ i18n[locale]['step1_bt2'] }}</a>
-        </div>
+        <template v-if="formStep === 1">
+          <div class="block form">
+            <span>+&nbsp;</span>
+            <input type="tel" placeholder="77010000000" maxLength="15" v-model="phone"/>
+          </div>
+          <div class="block action">
+            <a class="bt1" v-on:click="step1OKClicked">{{ i18n[locale]['step1_bt1'] }}</a>
+            <a class="bt2" v-on:click="step1HasCodeClicked">{{ i18n[locale]['step1_bt2'] }}</a>
+          </div>
+        </template>
+        <template v-else-if="formStep === 2">
+          <div class="block form">
+            <span>{{i18n[locale]['step2_input_label']}}:&nbsp;</span>
+            <input type="text" placeholder="6385" maxLength="10" v-model="code"/>
+          </div>
+          <div class="block action">
+            <a class="bt1" v-on:click="step2OKClicked">{{ i18n[locale]['step2_bt1'] }}</a>
+            <a class="bt2" v-on:click="step2HasntCodeClicked">{{ i18n[locale]['step2_bt2'] }}</a>
+          </div>
+        </template>
       </template>
-      <template v-else-if="formStep === 2">
-        <div class="block form">
-          <span>{{i18n[locale]['step2_input_label']}}:&nbsp;</span>
-          <input type="text" placeholder="6385" maxLength="10" v-model="code"/>
-        </div>
-        <div class="block action">
-          <a class="bt1" v-on:click="step2OKClicked">{{ i18n[locale]['step2_bt1'] }}</a>
-          <a class="bt2" v-on:click="step2HasntCodeClicked">{{ i18n[locale]['step2_bt2'] }}</a>
-        </div>
-      </template>
+      <div v-if="!loading && (msg !== '')" class="block" id="msg" v-html="i18n[locale][msg]"></div>
     </template>
-    <div v-if="!loading && (msg !== '')" class="block" id="msg" v-html="i18n[locale][msg]"></div>
   </div>
 </template>
 
@@ -56,6 +91,7 @@
         i18n: i18n,
         locale: 'ru',
         logo_url: '',
+        showAgreement: false,
         loading: false,
         hasAccess: false,
         hideBody: false,
@@ -144,6 +180,12 @@
             break;
         }
       },
+      closeAgreementClicked() {
+        this.showAgreement = false;
+      },
+      openAgreementClicked() {
+        this.showAgreement = true;
+      },
       redirect(url, phone) {
         if (url) {
           if (url.indexOf('http://') && url.indexOf('https://')) {
@@ -217,7 +259,7 @@
   }
 
   #app {
-    padding: 0 5px 5px 5px;
+    padding: 5px;
   }
 
   #langbar {
@@ -232,7 +274,7 @@
 
   #langbar > li {
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 5px;
     padding: 2px 14px;
     font-size: .9rem;
     color: #4228c7;
@@ -327,6 +369,48 @@
     text-align: center;
     font-size: 14px;
     color: #ff4b69;
+  }
+
+  .agreement_note {
+    margin-top: 5px;
+    font-size: .9rem;
+    line-height: 20px;
+  }
+
+  .agreement_note_button {
+    display: inline-block;
+    color: green;
+    text-decoration: underline;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    cursor: pointer;
+  }
+
+  #agreement {
+    display: inline-block;
+    max-width: 450px;
+    margin: 4px;
+    padding: 10px;
+    font-size: .9rem;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 1px 7px -2px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0 1px 7px -2px rgba(0, 0, 0, 0.75);
+    box-shadow: 0 1px 7px -2px rgba(0, 0, 0, 0.75);
+  }
+
+  #agreement > h1 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 15px;
+  }
+
+  #agreement > article {
+    text-align: left
+  }
+
+  #agreement > footer {
+    margin-top: 15px;
   }
 
   @media screen and (max-device-width: 480px) {
