@@ -15,30 +15,48 @@ function getXHR() {
   return null;
 }
 
-function sendRequest(method, url, data, success_cb, error_cb) {
+function sendRequest({method, url, headers, data, onSuccess, onError}) {
   let xhr = getXHR();
+  method = method || 'GET';
   xhr.open(method, url, true);
   xhr.onreadystatechange = (() => {
     if (xhr.readyState !== 4) return;
     try {
       let reply_obj = JSON.parse(xhr.responseText);
       if (199 < xhr.status && xhr.status < 300) { // success
-        success_cb(xhr.status, reply_obj);
+        onSuccess(xhr.status, reply_obj);
       } else {
-        error_cb(xhr.status, reply_obj, xhr.responseText);
+        onError(xhr.status, reply_obj, xhr.responseText);
       }
     } catch (e) {
-      error_cb(xhr.status, null, xhr.responseText);
+      onError(xhr.status, null, xhr.responseText);
     }
   });
-  if (!data) {
-    data = {};
-  }
-  data.mac = qpars.mac;
-  data.ip = qpars.ip;
   xhr.setRequestHeader("Authorization", qpars.token);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.send(JSON.stringify(data));
+  if(headers) {
+    for(let k in headers) {
+      xhr.setRequestHeader(k, headers[k]);
+    }
+  }
+  xhr.send(data);
 }
 
-export default ({ sendRequest: sendRequest })
+function sendJSONRequest(pars) {
+  pars.headers = pars.headers || {};
+  pars.headers['Content-Type'] = 'application/json';
+  pars.data = JSON.stringify(pars.data || {});
+  sendRequest(pars)
+}
+
+function sendFormDataRequest(pars) {
+  pars.headers = pars.headers || {};
+  pars.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+  let data = [];
+  for(let k in pars.data) {
+    data.push(encodeURIComponent(k) + '=' + encodeURIComponent(pars.data[k]));
+  }
+  pars.data = data.join('&');
+  sendRequest(pars)
+}
+
+export default ({sendRequest, sendJSONRequest, sendFormDataRequest })

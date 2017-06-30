@@ -79,7 +79,8 @@
   if (process.env.NODE_ENV === 'production') {
     API_URL_PREFIX = window.location.origin + API_URL_PREFIX;
   } else {
-    API_URL_PREFIX = 'http://localhost' + API_URL_PREFIX;
+//    API_URL_PREFIX = 'http://localhost' + API_URL_PREFIX;
+    API_URL_PREFIX = 'https://pwi.kz' + API_URL_PREFIX;
   }
 
   export default {
@@ -115,10 +116,17 @@
         this.msg = '';
         this.loading = true;
         let pnNum = Number(pn);
-        ajax.sendRequest('POST', API_URL_PREFIX + '/client/send_sms_code', {phone: pnNum}, (st, data) => {
-          this.loading = false;
-          this.formStep = 2;
-        }, this.onAPIError.bind(this))
+        let self = this;
+        ajax.sendJSONRequest({
+          method: 'POST',
+          url: API_URL_PREFIX + '/client/send_sms_code',
+          data: {phone: pnNum, ip: qpars.ip, mac: qpars.mac},
+          onSuccess() {
+            self.loading = false;
+            self.formStep = 2;
+          },
+          onError: this.onAPIError.bind(this),
+        });
       },
       step1HasCodeClicked() {
         this.formStep = 2;
@@ -133,12 +141,19 @@
         this.msg = '';
         this.loading = true;
         let codeNum = Number(code);
-        ajax.sendRequest('POST', API_URL_PREFIX + '/client/register', {code: codeNum}, (st, data) => {
-          this.loading = false;
-          this.msg = 'success';
-          this.hasAccess = true;
-          this.redirect(data.redirect_url, data.phone);
-        }, this.onAPIError.bind(this))
+        let self = this;
+        ajax.sendJSONRequest({
+          method: 'POST',
+          url: API_URL_PREFIX + '/client/register',
+          data: {code: codeNum, ip: qpars.ip, mac: qpars.mac},
+          onSuccess(st, data) {
+            self.loading = false;
+            self.msg = 'success';
+            self.hasAccess = true;
+            self.gotAccess(data.redirect_url, data.phone);
+          },
+          onError: this.onAPIError.bind(this),
+        });
       },
       step2HasntCodeClicked() {
         this.formStep = 1;
@@ -156,7 +171,7 @@
           case "already_registered":
             this.hasAccess = true;
             this.msg = 'already_have_access';
-            this.redirect(data.redirect_url, data.phone);
+            this.gotAccess(data.redirect_url, data.phone);
             break;
           case "in_black_list":
             this.hideBody = true;
@@ -186,7 +201,7 @@
       openAgreementClicked() {
         this.showAgreement = true;
       },
-      redirect(url, phone) {
+      gotAccess(url, phone) {
         if (url) {
           if (url.indexOf('http://') && url.indexOf('https://')) {
             url = 'http://' + url;
@@ -201,6 +216,9 @@
         i = document.createElement("input");
         i.name = "dst";
         i.value = url;
+        if(qpars.token === '1ab5c470c35a2958ecb87c99caa3111dd5cf02a1c7c34fd7c5d600b82de6acf7a0bf94e1552e63cc86fafebb2b2e5fdc50bc53cd917ec21d1f3450b72b55d9db') {
+          i.value = API_URL_PREFIX + '/client/loggedin/page?token=' + encodeURIComponent(qpars.token);
+        }
         f.appendChild(i);
         i = document.createElement("input");
         i.name = "username";
@@ -217,20 +235,30 @@
     },
 
     created() {
-      ajax.sendRequest('GET', API_URL_PREFIX + '/branding', null, (st, data) => {
-        this.logo_url = data.logo;
+      let self = this;
+      ajax.sendRequest({
+        url: API_URL_PREFIX + '/branding',
+        onSuccess(st, data) {
+          self.logo_url = data.logo;
+        },
       });
-      ajax.sendRequest('POST', API_URL_PREFIX + '/client/check', null, (st, data) => {
-        this.loading = false;
-        if (data.has_access === true) {
-          this.hasAccess = true;
-          this.msg = 'already_have_access';
-          this.redirect(data.redirect_url, data.phone);
-        } else {
-          this.hasAccess = false;
-          this.formStep = 1;
-        }
-      }, this.onAPIError.bind(this));
+      ajax.sendJSONRequest({
+        method: 'POST',
+        url: API_URL_PREFIX + '/client/check',
+        data: {ip: qpars.ip, mac: qpars.mac},
+        onSuccess(st, data) {
+          self.loading = false;
+          if (data.has_access === true) {
+            self.hasAccess = true;
+            self.msg = 'already_have_access';
+            self.gotAccess(data.redirect_url, data.phone);
+          } else {
+            self.hasAccess = false;
+            self.formStep = 1;
+          }
+        },
+        onError: this.onAPIError.bind(this),
+      });
     }
 
   }
