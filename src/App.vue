@@ -150,7 +150,7 @@
             self.loading = false;
             self.msg = 'success';
             self.hasAccess = true;
-            self.gotAccess(data.redirect_url, data.phone);
+            self.gotAccess(data.phone);
           },
           onError: this.onAPIError.bind(this),
         });
@@ -171,7 +171,7 @@
           case "already_registered":
             this.hasAccess = true;
             this.msg = 'already_have_access';
-            this.gotAccess(data.redirect_url, data.phone);
+            this.gotAccess(data.phone);
             break;
           case "in_black_list":
             this.hideBody = true;
@@ -201,24 +201,14 @@
       openAgreementClicked() {
         this.showAgreement = true;
       },
-      gotAccess(url, phone) {
-        if (url) {
-          if (url.indexOf('http://') && url.indexOf('https://')) {
-            url = 'http://' + url;
-          }
-        } else {
-          url = 'http://google.com';
-        }
+      gotAccess(phone) {
         let f, i;
         f = document.createElement("form");
         f.action = qpars.llink;
         f.method = "post";
         i = document.createElement("input");
         i.name = "dst";
-        i.value = url;
-        if(qpars.token === '1ab5c470c35a2958ecb87c99caa3111dd5cf02a1c7c34fd7c5d600b82de6acf7a0bf94e1552e63cc86fafebb2b2e5fdc50bc53cd917ec21d1f3450b72b55d9db') {
-          i.value = API_URL_PREFIX + '/client/loggedin/page?token=' + encodeURIComponent(qpars.token);
-        }
+        i.value = API_URL_PREFIX + '/client/loggedin/page?token=' + encodeURIComponent(qpars.token);
         f.appendChild(i);
         i = document.createElement("input");
         i.name = "username";
@@ -251,7 +241,7 @@
           if (data.has_access === true) {
             self.hasAccess = true;
             self.msg = 'already_have_access';
-            self.gotAccess(data.redirect_url, data.phone);
+            self.gotAccess(data.phone);
           } else {
             self.hasAccess = false;
             self.formStep = 1;
