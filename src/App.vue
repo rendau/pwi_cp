@@ -74,7 +74,7 @@
   import ajax from "./ajax";
   import qpars from "./qpars";
 
-  let API_URL_PREFIX = '/api/v1/hotspot';
+  let API_URL_PREFIX = '/api/hotspot';
 
   if (process.env.NODE_ENV === 'production') {
     API_URL_PREFIX = window.location.origin + API_URL_PREFIX;
