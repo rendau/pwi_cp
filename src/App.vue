@@ -1,70 +1,79 @@
 <template>
   <div id="app">
-    <div v-if="showAgreement" id="agreement">
-      <h1>{{ i18n[locale]['Agreement'] }}</h1>
-      <article>
-        <p>
-          Настоящим даю согласие на сбор,
-          обработку и хранение персональных данных обо мне
-          (включая биометрические) и на SMS-рассылку рекламного
-          характера на мой мобильный телефон.
-        </p>
-        <p>
-          Настоящим подтверждаю, что не требуется какого-либо
-          дополнительного моего согласия на сбор, обработку,
-          хранение персональных данных обо мне и на SMS-рассылку,
-          и в дальнейшем каких-либо претензий касательно сбора,
-          обработки, хранения моих персональных данных и
-          SMS-рассылки в мой адрес, иметь не буду.
-        </p>
-        <p>
-          Подтверждаю, что настоящее согласие действует в течение
-          неопределенного срока (бессрочно).
-        </p>
-        <p>
-          Текст настоящего согласия мной прочитан, дополнений и возражений не имею.
-        </p>
-      </article>
-      <footer><a class="bt1" v-on:click="closeAgreementClicked">{{ i18n[locale]['Close'] }}</a></footer>
+    <div id="ad" :style="{display: hasAccess ? 'block': 'none'}">
+      <div v-if="loading_config"><img src="./assets/loading.gif"/></div>
+      <div v-else-if="config !== null" id="ad-container">
+        <div id="ad-counter">Реклама уйдет через {{ config.ad_duration }} сек</div>
+        <img id="ad-img" :src="config.ad_content" @click="adClicked"/>
+      </div>
     </div>
-    <template v-else>
-      <ul id="langbar">
-        <li v-on:click="langClicked('en')" v-bind:class="{selected: locale=='en'}">English</li>
-        <li v-on:click="langClicked('ru')" v-bind:class="{selected: locale=='ru'}">Русский</li>
-        <li v-on:click="langClicked('kz')" v-bind:class="{selected: locale=='kz'}">Қазақша</li>
-      </ul>
-      <div v-if="logo_url !== ''" class="block"><img id="logo" v-bind:src="logo_url"/></div>
-      <div v-if="loading" class="block"><img src="./assets/loading.gif"/></div>
-      <template v-else-if="!hasAccess && !hideBody">
-        <div class="block" id="header" v-html="i18n[locale]['header_text']"></div>
-        <div class="agreement_note">
-          {{ i18n[locale]['agreement_note'] }}
-          <span class="agreement_note_button" v-on:click="openAgreementClicked">
+    <template v-if="!hasAccess">
+      <div v-if="showAgreement" id="agreement">
+        <h1>{{ i18n[locale]['Agreement'] }}</h1>
+        <article>
+          <p>
+            Настоящим даю согласие на сбор,
+            обработку и хранение персональных данных обо мне
+            (включая биометрические) и на SMS-рассылку рекламного
+            характера на мой мобильный телефон.
+          </p>
+          <p>
+            Настоящим подтверждаю, что не требуется какого-либо
+            дополнительного моего согласия на сбор, обработку,
+            хранение персональных данных обо мне и на SMS-рассылку,
+            и в дальнейшем каких-либо претензий касательно сбора,
+            обработки, хранения моих персональных данных и
+            SMS-рассылки в мой адрес, иметь не буду.
+          </p>
+          <p>
+            Подтверждаю, что настоящее согласие действует в течение
+            неопределенного срока (бессрочно).
+          </p>
+          <p>
+            Текст настоящего согласия мной прочитан, дополнений и возражений не имею.
+          </p>
+        </article>
+        <footer><a class="bt1" v-on:click="closeAgreementClicked">{{ i18n[locale]['Close'] }}</a></footer>
+      </div>
+      <template v-else>
+        <ul id="langbar">
+          <li v-on:click="langClicked('en')" v-bind:class="{selected: locale=='en'}">English</li>
+          <li v-on:click="langClicked('ru')" v-bind:class="{selected: locale=='ru'}">Русский</li>
+          <li v-on:click="langClicked('kz')" v-bind:class="{selected: locale=='kz'}">Қазақша</li>
+        </ul>
+        <div v-if="config !== null" class="block"><img id="logo" v-bind:src="config.logo"/></div>
+        <div v-if="loading" class="block"><img src="./assets/loading.gif"/></div>
+        <template v-else-if="!hasAccess && !hideBody">
+          <div class="block" id="header" v-html="i18n[locale]['header_text']"></div>
+          <div class="agreement_note">
+            {{ i18n[locale]['agreement_note'] }}
+            <span class="agreement_note_button" v-on:click="openAgreementClicked">
             {{ i18n[locale]['agreement_note_button'] }}
           </span>
-        </div>
-        <template v-if="formStep === 1">
-          <div class="block form">
-            <span>+&nbsp;</span>
-            <input type="tel" placeholder="77010000000" maxLength="15" v-model="phone"/>
           </div>
-          <div class="block action">
-            <a class="bt1" v-on:click="step1OKClicked">{{ i18n[locale]['step1_bt1'] }}</a>
-            <a class="bt2" v-on:click="step1HasCodeClicked">{{ i18n[locale]['step1_bt2'] }}</a>
-          </div>
+          <template v-if="formStep === 1">
+            <div class="block form">
+              <span>+&nbsp;</span>
+              <input type="tel" placeholder="77010000000" maxLength="15" v-model="phone"/>
+            </div>
+            <div class="block action">
+              <a class="bt1" v-on:click="step1OKClicked">{{ i18n[locale]['step1_bt1'] }}</a>
+              <a class="bt2" v-on:click="step1HasCodeClicked">{{ i18n[locale]['step1_bt2'] }}</a>
+            </div>
+          </template>
+          <template v-else-if="formStep === 2">
+            <div class="block form">
+              <span>{{i18n[locale]['step2_input_label']}}:&nbsp;</span>
+              <input type="text" placeholder="6385" maxLength="10" v-model="code"/>
+            </div>
+            <div class="block action">
+              <a class="bt1" v-on:click="step2OKClicked">{{ i18n[locale]['step2_bt1'] }}</a>
+              <a class="bt2" v-on:click="step2HasntCodeClicked">{{ i18n[locale]['step2_bt2'] }}</a>
+            </div>
+          </template>
         </template>
-        <template v-else-if="formStep === 2">
-          <div class="block form">
-            <span>{{i18n[locale]['step2_input_label']}}:&nbsp;</span>
-            <input type="text" placeholder="6385" maxLength="10" v-model="code"/>
-          </div>
-          <div class="block action">
-            <a class="bt1" v-on:click="step2OKClicked">{{ i18n[locale]['step2_bt1'] }}</a>
-            <a class="bt2" v-on:click="step2HasntCodeClicked">{{ i18n[locale]['step2_bt2'] }}</a>
-          </div>
-        </template>
+        <div v-if="!loading && (msg !== '')" class="block" id="msg" v-html="i18n[locale][msg]"></div>
       </template>
-      <div v-if="!loading && (msg !== '')" class="block" id="msg" v-html="i18n[locale][msg]"></div>
     </template>
   </div>
 </template>
@@ -91,10 +100,14 @@
       return {
         i18n: i18n,
         locale: 'ru',
-        logo_url: '',
+        loading_config: true,
+        config: null,
+        ad_timer_id: null,
+        redirect_url: '',
         showAgreement: false,
         loading: false,
         hasAccess: false,
+        accessPhone: 'undefined',
         hideBody: false,
         formStep: 1,
         phone: '',
@@ -149,8 +162,8 @@
           onSuccess(st, data) {
             self.loading = false;
             self.msg = 'success';
-            self.hasAccess = true;
-            self.gotAccess(data.phone);
+            self.accessPhone = data.phone;
+            self.gotAccess();
           },
           onError: this.onAPIError.bind(this),
         });
@@ -169,9 +182,9 @@
         this.loading = false;
         switch (data.error) {
           case "already_registered":
-            this.hasAccess = true;
             this.msg = 'already_have_access';
-            this.gotAccess(data.phone);
+            this.accessPhone = data.phone;
+            this.gotAccess();
             break;
           case "in_black_list":
             this.hideBody = true;
@@ -201,18 +214,63 @@
       openAgreementClicked() {
         this.showAgreement = true;
       },
-      gotAccess(phone) {
+      configLoaded(config) {
+        this.config = config;
+        this.loading_config = false;
+        this.hasAccess && this.start_ad_timing();
+      },
+      gotAccess() {
+        this.hasAccess = true;
+        this.loading_config || this.start_ad_timing();
+      },
+      start_ad_timing() {
+        if(!this.config) {
+          this.redirect_url = 'http://google.kz';
+          this.redirect();
+          return;
+        }
+        this.redirect_url = this.config.redirect_url;
+        ajax.sendJSONRequest({
+          method: "PUT",
+          url: API_URL_PREFIX + '/client/event/ad/show',
+          data: {ad_id: this.config.ad_id},
+          onSuccess() {},
+          onError() {},
+        });
+        this.ad_timer_id = setInterval(()=> {
+          this.config.ad_duration--;
+          if(this.config.ad_duration <= 0) {
+            clearInterval(this.ad_timer_id);
+            this.redirect();
+          }
+        }, 1000);
+      },
+      adClicked() {
+        if(this.config && this.config.ad_link_url && this.config.ad_link_url !== '#') {
+          this.ad_timer_id && clearInterval(this.ad_timer_id);
+          this.redirect_url = this.config.ad_link_url;
+          let self = this;
+          ajax.sendJSONRequest({
+            method: "PUT",
+            url: API_URL_PREFIX + '/client/event/ad/click',
+            data: {ad_id: this.config.ad_id},
+            onSuccess() {self.redirect();},
+            onError() {self.redirect();},
+          });
+        }
+      },
+      redirect() {
         let f, i;
         f = document.createElement("form");
         f.action = qpars.llink;
         f.method = "post";
         i = document.createElement("input");
         i.name = "dst";
-        i.value = API_URL_PREFIX + '/client/loggedin/page?token=' + encodeURIComponent(qpars.token);
+        i.value = this.redirect_url;
         f.appendChild(i);
         i = document.createElement("input");
         i.name = "username";
-        i.value = phone + "_" + Math.floor(Math.random() * 99999);
+        i.value = this.accessPhone + "_" + Math.floor(Math.random() * 99999);
         f.appendChild(i);
         i = document.createElement("input");
         i.name = "password";
@@ -227,9 +285,13 @@
     created() {
       let self = this;
       ajax.sendRequest({
-        url: API_URL_PREFIX + '/branding',
+        url: API_URL_PREFIX + '/captive/config',
         onSuccess(st, data) {
-          self.logo_url = data.logo;
+          self.configLoaded(data);
+        },
+        onError() {
+          console.error(arguments);
+          self.configLoaded(null);
         },
       });
       ajax.sendJSONRequest({
@@ -239,9 +301,9 @@
         onSuccess(st, data) {
           self.loading = false;
           if (data.has_access === true) {
-            self.hasAccess = true;
             self.msg = 'already_have_access';
-            self.gotAccess(data.phone);
+            self.accessPhone = data.phone;
+            self.gotAccess();
           } else {
             self.hasAccess = false;
             self.formStep = 1;
@@ -262,6 +324,7 @@
 
   html, body {
     width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
   }
@@ -277,6 +340,8 @@
   }
 
   #app {
+    width: 100%;
+    height: 100%;
     padding: 5px;
   }
 
@@ -429,6 +494,31 @@
 
   #agreement > footer {
     margin-top: 15px;
+  }
+
+  #ad {
+    width: 100%;
+    height: 100%;
+  }
+
+  #ad-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  #ad-counter {
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  #ad-img {
+    object-fit: contain;
+    width: 100%;
+    height: calc(100% - 30px);
+    vertical-align: middle;
+    cursor: pointer;
   }
 
   @media screen and (max-device-width: 480px) {
