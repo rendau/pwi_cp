@@ -15,6 +15,7 @@ function getParams() {
       llink: 'http://google.kz',
     };
   }
+  console.log(result.llink);
   return result;
 }
 

@@ -2,7 +2,7 @@
   <div id="app">
     <div id="ad" :style="{display: hasAccess ? 'block': 'none'}">
       <div v-if="loading_config"><img src="./assets/loading.gif"/></div>
-      <div v-else-if="config !== null" id="ad-container">
+      <div v-else-if="config && config.ad_id" id="ad-container">
         <div id="ad-counter">Реклама уйдет через {{ config.ad_duration }} сек</div>
         <img id="ad-img" :src="config.ad_content" @click="adClicked"/>
       </div>
@@ -226,6 +226,11 @@
       start_ad_timing() {
         if(!this.config) {
           this.redirect_url = 'http://google.kz';
+          this.redirect();
+          return;
+        }
+        if (!this.config.ad_id) {
+          this.redirect_url = this.config.redirect_url || 'http://google.kz';
           this.redirect();
           return;
         }
