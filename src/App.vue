@@ -225,12 +225,12 @@
       },
       start_ad_timing() {
         if(!this.config) {
-          this.redirect_url = 'http://google.kz';
+          this.redirect_url = '';
           this.redirect();
           return;
         }
         if (!this.config.ad_id) {
-          this.redirect_url = this.config.redirect_url || 'http://google.kz';
+          this.redirect_url = this.config.redirect_url || '';
           this.redirect();
           return;
         }
@@ -272,6 +272,9 @@
         i = document.createElement("input");
         i.name = "dst";
         i.value = this.redirect_url;
+        if (!i.value || i.value === '#') {
+          i.value = 'http://google.com';
+        }
         f.appendChild(i);
         i = document.createElement("input");
         i.name = "username";
